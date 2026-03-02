@@ -9,10 +9,7 @@ This repository contains the documentations process to create a classification M
 > 5. requirements.txt, contains list of files needed for StreamlitApp deployment. 
 > 6. deployment files, contains:
 >> 6a. models, list of models used for deployments. 
->> 6b. src, contains 3 files:
->>> 6b.1 lol_features.py, all functions related to features reconstructions. 
->>> 6b.2 prediction.py, inference in app form, for deployment. 
->>> 6b.3 streamlit_app.py, deployment app, including UI/UX. 
+>> 6b. src, contains 3 files: [1] lol_features.py, all functions related to features reconstructions. [2] prediction.py, inference in app form, for deployment. [3] streamlit_app.py, deployment app, including UI/UX. 
 > 7. concept.txt, answering some conceptual problems. (ps: not exactly related to the project, but listed so this doesn't get lost.)
 
 ## Problem Identification
