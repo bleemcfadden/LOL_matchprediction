@@ -1,0 +1,20 @@
+**Conceptual Problems**
+well, since it's a conceptual question, i will explain these conceptually. 
+
+1. When is bagging needed and how it works?
+Bagging is required where the base learner exhibit high variance and isntability with respect to perturbations in the training sample. Usually, in small dataset, where overfitting often happens. 
+How it works is by averaging decorrelated high variance estimators. It basically trains each feature subsets simultaneously, the averaging or do voting. By doing so, it stabilize flexible learners. 
+
+2. How is Random Forest differ from LGBM and XGBoost?
+While all three of them derived from tree-based ensamble learners, they diverged in their optimisation philosophy along with bias-variance tradeoff management. 
+RF uses bagging to construct numerous decision trees using bootstrap sample, then randomly conduct feature subsettings to decorrelate them. The results of this is parallel and variance-reductive. Trees are grown independently, then combined using averaging for regression or majority voting for classification. Again, RF mitigates variance without minimising a differentiable global loss across trees. RF is best used when signals are weak, aka the data is filled with noise. It often results in lower variance in predictions. 
+In opposte to RF, XGB and LGBM use boosting. What it does is, trees are built sequentially and each new trees correcting the residual errors of the previous one. They are bias-prioritised. Unlike RF that's mostly used for smaller dataset, these two perform generally better for large and sparse dataset. LGBM and XGB is best to use when there's less noise, highly structure, interative, and non-linear.
+How XGB and LGBM differs structurally. XGB is level wise growth and LGBM is leaf-wise. In practice, LGBM often is more optimised (hence faster), especially for sparse dataset like ours. Plus, LGBM has native categorical support. 
+
+3. What is cross validation?
+Generally, cv is a resampling method used to assessing learner's generalisation error. What it does is spliting the training data into multiple folds, preferably equally. The same model is tested across folds and it's stability is measured in comparison to certain fold in each iteration. In short, it tested the model's robustness across folds by comparing their reliability. 
+
+Source:
+for more on these topics, read: Elements of Statistical Learning, Hastie et al. 
+
+_boni
