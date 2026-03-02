@@ -13,12 +13,9 @@ import streamlit as st
 try:
     from deployment.src import prediction
 except Exception:
-    import prediction  # fallback if running from deployment/src directly
+    import prediction  #fallback if running from deployment/src directly
 
-
-# -----------------------------------------------------------------------------
 # App config
-# -----------------------------------------------------------------------------
 st.set_page_config(page_title="LoL Win Probability", layout="wide")
 
 warnings.filterwarnings(
@@ -73,9 +70,7 @@ def get_champion_options() -> List[str]:
 CHAMPION_OPTIONS = get_champion_options()
 
 
-# -----------------------------------------------------------------------------
 # Session state init
-# -----------------------------------------------------------------------------
 REGISTRY_COLS = [
     "gameid", "teamname",
     "side", "firstPick",
@@ -92,9 +87,7 @@ if "registry_df" not in st.session_state:
     st.session_state.registry_df = pd.DataFrame(columns=REGISTRY_COLS)
 
 
-# -----------------------------------------------------------------------------
 # Sidebar controls
-# -----------------------------------------------------------------------------
 with st.sidebar:
     st.header("Controls")
     st.write("Run from repo root:")
@@ -112,9 +105,7 @@ with st.sidebar:
         st.dataframe(st.session_state.registry_df, use_container_width=True)
 
 
-# -----------------------------------------------------------------------------
 # Helpers
-# -----------------------------------------------------------------------------
 def _append_row(df: pd.DataFrame, row: dict) -> pd.DataFrame:
     new_row = {c: row.get(c, pd.NA) for c in REGISTRY_COLS}
     return pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
@@ -150,10 +141,8 @@ def champ_picker(label: str, key: str) -> str:
         return manual
     return choice
 
-
-# -----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Layout: Tabs
-# -----------------------------------------------------------------------------
 # --- Tab navigation state ---
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "Registration"
@@ -164,9 +153,7 @@ tab_register, tab_predict, tab_registry = st.tabs(
     ["➕ Registration", "🎯 Prediction", "📒 Team Registry"]
 )
 
-# -----------------------------------------------------------------------------
 # TAB 1: Registration
-# -----------------------------------------------------------------------------
 with tab_register:
     st.subheader("Register Your Team")
     with st.form("register_form", clear_on_submit=False):
@@ -288,10 +275,8 @@ with tab_register:
                 st.session_state.registry_df = _append_row(st.session_state.registry_df, user_row)
                 st.success("Row registered ✅  Now click the **🎯 Prediction** tab to run win probability.")
 
-# -----------------------------------------------------------------------------
-# -----------------------------------------------------------------------------
+
 # TAB 2: Prediction
-# -----------------------------------------------------------------------------
 with tab_predict:
     if st.session_state.active_tab != "Prediction":
         st.empty()
@@ -375,9 +360,7 @@ with tab_predict:
             with st.expander("Show raw output dict"):
                 st.json(out)
 
-# -----------------------------------------------------------------------------
 # TAB 3: Registry
-# -----------------------------------------------------------------------------
 with tab_registry:
     if st.session_state.active_tab != "Team Registry":
         st.empty()

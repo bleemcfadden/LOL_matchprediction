@@ -1,5 +1,8 @@
 # Predicting Winning Probability League of Legends Pro Matches
 
+## App Link
+https://lolmatchpredition-boni.streamlit.app/
+
 ## Repository Outline
 This repository contains the documentations process to create a classification ML model and its deployment. There are a few important files listed below: 
 > 1. README.md 
@@ -33,7 +36,7 @@ On the later phase, the performances were reversed--quite expectedly. Even so, t
 Main programing language used here is python. For main packages used includes: pandas, numpy, matplotlib, joblib, scipy, sklearns, lightgbm, xgboost, sklearn. 
 
 ## Reference
-See: https://bonis-lol-matchpredict.streamlit.app/ for final result of the app. 
+See: https://lolmatchpredition-boni.streamlit.app/ for final result of the app. 
 
 ps: LGBM is very... spammy, to say the least. if you want to rerun my notebook, don't complain to me when it spams you. Thou have been warned. >_<
 

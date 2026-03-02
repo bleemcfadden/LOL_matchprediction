@@ -18,9 +18,7 @@ warnings.filterwarnings(
     message="X does not have valid feature names, but LGBMClassifier was fitted with feature names"
 )
 
-# ============================================================
-# 0) PATH BOOTSTRAP (critical for joblib unpickle)
-# ============================================================
+#path bootstrap
 SRC_DIR = Path(__file__).resolve().parent          # .../deployment/src
 DEPLOYMENT_DIR = SRC_DIR.parent                    # .../deployment
 REPO_ROOT = DEPLOYMENT_DIR.parent                  # .../<repo root>
@@ -30,13 +28,11 @@ for p in (str(REPO_ROOT), str(DEPLOYMENT_DIR), str(SRC_DIR)):
         sys.path.insert(0, p)
 
 
-# ============================================================
-# 1) OPTIONAL Streamlit caching (disable with LOL_DISABLE_CACHE=1)
-# ============================================================
+#disable cache by streamlit
 DISABLE_CACHE = os.getenv("LOL_DISABLE_CACHE", "0") == "1"
 
 try:
-    import streamlit as st  # type: ignore
+    import streamlit as st  #type: ignore
 except Exception:
     st = None
 
@@ -47,9 +43,7 @@ else:
         return func
 
 
-# ============================================================
-# 2) MODEL PATHS
-# ============================================================
+#model paths
 MODEL_DIR = DEPLOYMENT_DIR / "models"
 
 MODEL_FILES = {
@@ -59,16 +53,10 @@ MODEL_FILES = {
 }
 
 
-# ============================================================
-# 3) RAW COLS REQUIRED BY LolPOVFeatures
-#    (Your LolPOVFeatures builds patch_major from patch, so patch MUST be present)
-# ============================================================
+#a patch for patch, there was a bug here. 
 RAW_REQUIRED_COLS = ["patch"]
 
-
-# ============================================================
-# 4) HELPERS
-# ============================================================
+#helper functions
 def _unique_preserve_order(cols):
     seen = set()
     out = []
@@ -123,9 +111,7 @@ def _to_int01(x, default=0) -> int:
         return int(default)
 
 
-# ============================================================
-# 5) LOAD MODELS (cached if streamlit active and cache enabled)
-# ============================================================
+#load models (cached if streamlit active and cache enabled)
 @_cache_resource
 def load_models() -> Tuple[Any, Any, Any]:
     paths = {k: (MODEL_DIR / v) for k, v in MODEL_FILES.items()}
@@ -161,7 +147,7 @@ def derive_feature_schema(pipe) -> list[str]:
 
     cols = _unique_preserve_order(cols)
 
-    # Ensure raw-required inputs exist (e.g. patch for patch_major engineering)
+    #Ensure raw-required inputs exist (e.g. patch for patch_major engineering)
     for c in RAW_REQUIRED_COLS:
         if c not in cols:
             cols.append(c)
@@ -172,9 +158,7 @@ def derive_feature_schema(pipe) -> list[str]:
     return cols
 
 
-# ============================================================
-# 6) BONI_COLS / USER ROW
-# ============================================================
+#cols for df. 
 BONI_COLS = [
     "side", "firstPick",
     "ban1", "ban2", "ban3", "ban4", "ban5",
@@ -203,21 +187,19 @@ def add_user_row(user_inputs: Dict[str, Any]) -> pd.DataFrame:
     row = {c: user_inputs.get(c, np.nan) for c in BONI_COLS}
     df = pd.DataFrame([row])
 
-    # normalize common binary fields
+    #normalize common binary fields
     df.loc[0, "playoffs"] = _to_int01(df.loc[0, "playoffs"], default=0)
     df.loc[0, "firstPick"] = _to_int01(df.loc[0, "firstPick"], default=0)
     df.loc[0, "firstdragon"] = _to_int01(df.loc[0, "firstdragon"], default=0)
 
-    # Keep patch as string-ish (LolPOVFeatures will parse it)
+    #Keep patch as string-ish (LolPOVFeatures will parse it)
     if "patch" in df.columns and not pd.isna(df.loc[0, "patch"]):
         df.loc[0, "patch"] = str(df.loc[0, "patch"])
 
     return df
 
 
-# ============================================================
-# 7) MATCH FEATURE BUILD (diff + derived)
-# ============================================================
+#match features buiilding
 def build_match_features(df_row: pd.DataFrame) -> pd.DataFrame:
     """
     Compute matchup diff features from raw team vs opp stats.
@@ -260,9 +242,7 @@ def build_match_features(df_row: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# ============================================================
-# 8) MAIN INFERENCE
-# ============================================================
+#inference THIS IS THE MAIN FUNCTION!
 def run_inference(user_inputs: Dict[str, Any]) -> Dict[str, Any]:
     """
     Returns:
@@ -312,9 +292,7 @@ def run_inference(user_inputs: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-# ============================================================
-# 9) CLI TEST (optional)
-# ============================================================
+#client tests
 if __name__ == "__main__":
     sample = {
         "side": "Blue",
